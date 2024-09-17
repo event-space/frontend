@@ -1,0 +1,17 @@
+.notFound {
+  padding: 100px 0;
+  font-family: "Inter";
+}
+.notfound__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+.notfound__wrapper img {
+  width: 300px;
+}
+.notfound__wrapper h1 {
+  font-size: 96px;
+  color: rgb(243, 87, 87);
+  font-weight: 700;
+}
