@@ -1,10 +1,6 @@
 {
-  "parser": "@typescript-eslint/parser",  // Add the parser to handle TypeScript
-  "extends": [
-    "airbnb",
-    "airbnb/hooks",
-    "plugin:prettier/recommended"
-  ],
+  "parser": "@typescript-eslint/parser", // Add the parser to handle TypeScript
+  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
   "plugins": [
     "prettier",
     "@typescript-eslint" // Add TypeScript ESLint plugin for linting TS code
@@ -24,7 +20,8 @@
   "settings": {
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true // This setting tries to resolve `*.d.ts` files
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
       }
     }
   },
