@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/frontend/static/css/main.da672c5b.css",
+    "main.js": "/frontend/static/js/main.028a289c.js",
+    "static/media/LoginBanner.png": "/frontend/static/media/LoginBanner.afd5a2d9c5f82a31a330.png",
+    "static/media/RegisterBanner.png": "/frontend/static/media/RegisterBanner.30af649d60e8618c2287.png",
+    "index.html": "/frontend/index.html",
+    "static/media/getFetch.cjs": "/frontend/static/media/getFetch.c4cca45e22bc1b2c7d0d.cjs",
+    "main.da672c5b.css.map": "/frontend/static/css/main.da672c5b.css.map",
+    "main.028a289c.js.map": "/frontend/static/js/main.028a289c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.da672c5b.css",
+    "static/js/main.028a289c.js"
+  ]
+}
