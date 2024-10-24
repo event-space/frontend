@@ -1,19 +1,30 @@
 {
   "files": {
-    "main.css": "/frontend/static/css/main.6fefdaba.css",
-    "main.js": "/frontend/static/js/main.9066e620.js",
+    "main.css": "/frontend/static/css/main.5c0c0ad0.css",
+    "main.js": "/frontend/static/js/main.cadf5aef.js",
+    "static/media/HomeBanner.png": "/frontend/static/media/HomeBanner.a5bbbf0e4a3ef911e9f9.png",
     "static/media/LoginBanner.png": "/frontend/static/media/LoginBanner.afd5a2d9c5f82a31a330.png",
     "static/media/RegisterBanner.png": "/frontend/static/media/RegisterBanner.30af649d60e8618c2287.png",
+    "static/media/BannerMakeEvent.png": "/frontend/static/media/BannerMakeEvent.440c1ae444b7f20ada02.png",
     "static/media/kz.svg": "/frontend/static/media/kz.5f48e5156a4243d575e18d8bf63fa141.svg",
+    "static/media/linkedin.svg": "/frontend/static/media/linkedin.6ea91322b6985e52808f2673ecfa8345.svg",
+    "static/media/notifications.svg": "/frontend/static/media/notifications.734700b0d688eebf605132a1bad7968c.svg",
+    "static/media/spaces.svg": "/frontend/static/media/spaces.6ce4cc97b822ed57c7787542f183acd8.svg",
+    "static/media/orders.svg": "/frontend/static/media/orders.91236fc62d0796ca7c29588ea2aae09d.svg",
+    "static/media/home.svg": "/frontend/static/media/home.a8772c0637a2388f9576900373cebb92.svg",
     "static/media/en.svg": "/frontend/static/media/en.b655986d51a395b27c4e645a67d65b5e.svg",
+    "static/media/facebook.svg": "/frontend/static/media/facebook.65d2280ee983904664c9943e455b9d01.svg",
+    "static/media/instagram.svg": "/frontend/static/media/instagram.dda30db1ef8e5734a790cb48bd04e192.svg",
+    "static/media/profile.svg": "/frontend/static/media/profile.63529f386afbb4637a8c47c06075b667.svg",
+    "static/media/logout.svg": "/frontend/static/media/logout.0e5ff60c684ef7f9f1f37328cdd0eeb7.svg",
     "static/media/ru.svg": "/frontend/static/media/ru.6bb08156eb7b13a4b2220efbe7773a7d.svg",
     "index.html": "/frontend/index.html",
     "static/media/getFetch.cjs": "/frontend/static/media/getFetch.c4cca45e22bc1b2c7d0d.cjs",
-    "main.6fefdaba.css.map": "/frontend/static/css/main.6fefdaba.css.map",
-    "main.9066e620.js.map": "/frontend/static/js/main.9066e620.js.map"
+    "main.5c0c0ad0.css.map": "/frontend/static/css/main.5c0c0ad0.css.map",
+    "main.cadf5aef.js.map": "/frontend/static/js/main.cadf5aef.js.map"
   },
   "entrypoints": [
-    "static/css/main.6fefdaba.css",
-    "static/js/main.9066e620.js"
+    "static/css/main.5c0c0ad0.css",
+    "static/js/main.cadf5aef.js"
   ]
 }
