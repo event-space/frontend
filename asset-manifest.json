@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/frontend/static/css/main.5c0c0ad0.css",
-    "main.js": "/frontend/static/js/main.cadf5aef.js",
+    "main.css": "/frontend/static/css/main.4b5d1f25.css",
+    "main.js": "/frontend/static/js/main.94503578.js",
     "static/media/HomeBanner.png": "/frontend/static/media/HomeBanner.a5bbbf0e4a3ef911e9f9.png",
     "static/media/LoginBanner.png": "/frontend/static/media/LoginBanner.afd5a2d9c5f82a31a330.png",
     "static/media/RegisterBanner.png": "/frontend/static/media/RegisterBanner.30af649d60e8618c2287.png",
@@ -20,11 +20,11 @@
     "static/media/ru.svg": "/frontend/static/media/ru.6bb08156eb7b13a4b2220efbe7773a7d.svg",
     "index.html": "/frontend/index.html",
     "static/media/getFetch.cjs": "/frontend/static/media/getFetch.c4cca45e22bc1b2c7d0d.cjs",
-    "main.5c0c0ad0.css.map": "/frontend/static/css/main.5c0c0ad0.css.map",
-    "main.cadf5aef.js.map": "/frontend/static/js/main.cadf5aef.js.map"
+    "main.4b5d1f25.css.map": "/frontend/static/css/main.4b5d1f25.css.map",
+    "main.94503578.js.map": "/frontend/static/js/main.94503578.js.map"
   },
   "entrypoints": [
-    "static/css/main.5c0c0ad0.css",
-    "static/js/main.cadf5aef.js"
+    "static/css/main.4b5d1f25.css",
+    "static/js/main.94503578.js"
   ]
 }
