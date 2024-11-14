@@ -1,0 +1,31 @@
+.footer {
+  padding: 10px 0;
+  padding-top: 50px;
+}
+.footer__wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.link {
+  text-decoration: none;
+  color: white;
+}
+.copyright {
+  padding: 20px 0px;
+  display: flex;
+  gap: 5px;
+  justify-content: end;
+  font-size: 16px;
+  color: white;
+}
+.buttom {
+  border-top: 1px solid white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav {
+  color: white;
+}

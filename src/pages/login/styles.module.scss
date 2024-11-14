@@ -1,0 +1,23 @@
+.login {
+  display: flex;
+  height: 100vh;
+}
+.leftSection {
+  flex: 4;
+  display: flex;
+  background-color: whitesmoke;
+}
+
+.loginInfo {
+  width: 100%;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login__wrapper {
+  display: flex;
+  padding: 10% 0;
+  gap: 100px;
+}

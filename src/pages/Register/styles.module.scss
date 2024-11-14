@@ -1,0 +1,57 @@
+.register {
+  display: flex;
+  height: 100vh;
+}
+.rightSection {
+  flex: 2;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('../../shared/images/RegisterBanner.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.registerInfo {
+  padding: 0 25%;
+  display: flex;
+  gap: 30px;
+  flex-direction: column;
+  width: 100%;
+}
+.registerInfoRight {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+  color: white;
+}
+
+.signUpRight {
+  padding: 10px 35px !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+}
+
+.leftSection {
+  flex: 4;
+  display: flex;
+  background-color: whitesmoke;
+}
+
+.loginInfo {
+  width: 100%;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login__wrapper {
+  display: flex;
+  padding: 10% 0;
+  gap: 100px;
+}

@@ -1,0 +1,25 @@
+.rightSection {
+  flex: 2;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('../../../../shared/images/LoginBanner.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.loginInfoRight {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+  color: white;
+}
+
+.signInRight {
+  padding: 10px 35px !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+}
