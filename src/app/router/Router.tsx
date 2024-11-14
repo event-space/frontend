@@ -7,12 +7,11 @@ import {
 import RootLayout from '../layout/RootLayout';
 import LoginPage from '../../pages/login/Login';
 import PrivateRoute from './PrivateRoute';
-import UsersPage from '../../pages/users/Users';
-import SpacePage from '../../pages/space/Space';
-import CalendarPage from '../../pages/calendar/Calendar';
 import HomePage from '../../pages/home/Home';
 import ErrorPage from '../../pages/Error/Error';
 import RegisterPage from '../../pages/Register/Register';
+import { Profile } from '../../pages/Profile';
+import { AllSpace } from '../../pages/Spaces';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,29 +19,15 @@ const router = createBrowserRouter(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
         <Route
-          path="/users"
+          path="/profile"
           element={
             <PrivateRoute>
-              <UsersPage />
+              <Profile />
             </PrivateRoute>
           }
         />
-        <Route
-          path="/spaces"
-          element={
-            <PrivateRoute>
-              <SpacePage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/calendar"
-          element={
-            <PrivateRoute>
-              <CalendarPage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/spaces" element={<AllSpace />} />
+
         <Route path="*" element={<ErrorPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />

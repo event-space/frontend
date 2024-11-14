@@ -35,13 +35,12 @@ export default function Header() {
         method: 'GET',
       }).then(response => {
         if (response) {
+          console.log(response);
           setUserData(response);
         }
       });
     }
   }, [loading]);
-
-  console.log(userData);
 
   return (
     <div className="container">
@@ -72,8 +71,8 @@ export default function Header() {
                   <NotificationsIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Profile">
-                <IconButton sx={{ color: '#10107b' }}>
+              <Tooltip title={userData?.email}>
+                <IconButton sx={{ color: '#10107b' }} href="/profile">
                   <AccountCircleIcon />
                 </IconButton>
               </Tooltip>
