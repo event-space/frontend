@@ -35,7 +35,6 @@ export default function Header() {
         method: 'GET',
       }).then(response => {
         if (response) {
-          console.log(response);
           setUserData(response);
         }
       });
@@ -62,7 +61,7 @@ export default function Header() {
           {user?.isAuthenticated ? (
             <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
               <Tooltip title="Events">
-                <IconButton sx={{ color: '#10107b' }}>
+                <IconButton sx={{ color: '#10107b' }} href="/events">
                   <EventIcon />
                 </IconButton>
               </Tooltip>

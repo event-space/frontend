@@ -12,6 +12,7 @@ import ErrorPage from '../../pages/Error/Error';
 import RegisterPage from '../../pages/Register/Register';
 import { Profile } from '../../pages/Profile';
 import { AllSpace } from '../../pages/Spaces';
+import { CreateEvent } from '../../pages/event';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,7 +28,14 @@ const router = createBrowserRouter(
           }
         />
         <Route path="/spaces" element={<AllSpace />} />
-
+        <Route
+          path="/events"
+          element={
+            <PrivateRoute>
+              <CreateEvent />
+            </PrivateRoute>
+          }
+        />
         <Route path="*" element={<ErrorPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />

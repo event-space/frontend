@@ -9,7 +9,7 @@ export default function MakeEventBanner() {
   const { user } = useUserStore();
 
   const handleEvent = () => {
-    navigate('/event');
+    navigate('/events');
   };
   const handleLogin = () => {
     navigate('/login');
