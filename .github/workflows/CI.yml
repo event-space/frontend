@@ -33,7 +33,7 @@ jobs:
         env:
           CI: ''
         with:
-          cmd: build
+          cmd: next build
 
       - name: Publish to Docker Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
