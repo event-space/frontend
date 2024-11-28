@@ -13,6 +13,7 @@ import RegisterPage from '../../pages/Register/Register';
 import { Profile } from '../../pages/Profile';
 import { AllSpace } from '../../pages/Spaces';
 import { CreateEvent } from '../../pages/event';
+import { MyEvents } from '../../pages/my-events';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,14 @@ const router = createBrowserRouter(
           element={
             <PrivateRoute>
               <CreateEvent />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-events"
+          element={
+            <PrivateRoute>
+              <MyEvents />
             </PrivateRoute>
           }
         />
