@@ -88,9 +88,20 @@ export default function Profile() {
               </Link>
               <Typography sx={{ color: 'text.primary' }}>Profile</Typography>
             </Breadcrumbs>
-            <Typography sx={{ fontSize: '36px', fontWeight: '600' }}>
-              {user?.role} Profile
-            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Typography sx={{ fontSize: '36px', fontWeight: '600' }}>
+                User Profile
+              </Typography>
+              <Button variant="text" href="/my-events">
+                My events
+              </Button>
+            </Box>
           </Box>
           <Paper
             sx={{

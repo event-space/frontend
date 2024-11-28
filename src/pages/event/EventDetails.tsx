@@ -41,7 +41,11 @@ export default function EventDetails({
   }, []);
 
   const handleNext = () => {
-    onNext({ name: eventName, space: selectedSpace });
+    onNext({
+      name: eventName,
+      space: selectedSpace,
+      userEmail: userInfo?.username,
+    });
   };
 
   return (

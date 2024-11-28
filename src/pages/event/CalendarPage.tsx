@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -37,9 +37,13 @@ export default function CalendarPage({
     `https://space-event.kenuki.org/order-service/api/v1/slots/${selectedSpace.id}`,
   );
 
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth(),
+  );
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear(),
+  );
+
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
@@ -64,8 +68,11 @@ export default function CalendarPage({
 
   const findEventsForDate = (date: Date | null): ISlot[] => {
     if (!date) return [];
-    const dateStr = date.toISOString().split('T')[0];
-    return events.filter(event => event.startTime.startsWith(dateStr));
+    const dateStr = date.toDateString();
+    return events.filter(event => {
+      const eventDate = new Date(event.startTime).toDateString();
+      return eventDate === dateStr;
+    });
   };
 
   const handleDateClick = (day: ISlot) => {
@@ -83,7 +90,44 @@ export default function CalendarPage({
         setEvents(response);
       }
     });
-  }, [fetchSlots, user]);
+  }, [user]);
+
+  const handleNextMonth = () => {
+    if (currentMonth < new Date().getMonth() + 2) {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+  };
+
+  const handlePrevMonth = () => {
+    if (currentMonth > new Date().getMonth()) {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    }
+  };
+
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   return (
     <Box sx={{ padding: '20px' }}>
@@ -100,8 +144,37 @@ export default function CalendarPage({
         <Typography variant="h5" sx={{ mb: 2 }}>
           Select Available Date for {selectedSpace.name}
         </Typography>
-        <Typography></Typography>
+        <Box></Box>
       </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {monthNames[currentMonth]} {currentYear}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={handlePrevMonth}
+            disabled={currentMonth === new Date().getMonth()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleNextMonth}
+            disabled={currentMonth === new Date().getMonth() + 1}
+          >
+            Next
+          </Button>
+        </Box>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -127,6 +200,7 @@ export default function CalendarPage({
                           {findEventsForDate(day).length > 0 ? (
                             findEventsForDate(day).map(event => (
                               <Button
+                                key={event.id}
                                 variant="contained"
                                 color={event.booked ? 'error' : 'primary'}
                                 size="small"
@@ -143,7 +217,7 @@ export default function CalendarPage({
                               size="small"
                               disabled
                             >
-                              weekend
+                              No Slots
                             </Button>
                           )}
                         </>

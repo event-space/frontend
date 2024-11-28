@@ -2,14 +2,7 @@ import { useState } from 'react';
 import EventDetails from './EventDetails';
 import OrderSummary from './OrderSummary';
 import CalendarPage from './CalendarPage';
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  Divider,
-  Link,
-  Typography,
-} from '@mui/material';
+import { Box, Breadcrumbs, Divider, Link, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateEventFlow() {
@@ -32,7 +25,7 @@ export default function CreateEventFlow() {
   };
 
   const handleConfirm = () => {
-    console.log('Event confirmed:', eventDetails);
+    navigate('/');
   };
 
   return (
