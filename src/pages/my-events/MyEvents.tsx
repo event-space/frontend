@@ -137,9 +137,7 @@ export default function MyEvents() {
                       <TableCell>
                         <Button
                           variant="outlined"
-                          onClick={() =>
-                            navigate(`/event-details/${booking.id}`)
-                          }
+                          onClick={() => navigate(`/my-events/${booking.id}`)}
                         >
                           Details
                         </Button>
