@@ -13,34 +13,42 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Set Node.js
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: '20.x'
 
-      - name: Run Yarn Install
+      # Step 3: Install Dependencies using Yarn
+      - name: Install Dependencies
         uses: borales/actions-yarn@v5
-        env:
-          CI: ''
         with:
           cmd: install
 
-      - name: Build Production Bundle
+      # Step 4: Build the Next.js Production Bundle
+      - name: Build Next.js App
         uses: borales/actions-yarn@v5
-        env:
-          CI: ''
         with:
-          cmd: build
+          cmd: next build
 
-      - name: Publish to DockerHub
+      # Step 5: Run Next.js Linting (optional but recommended)
+      - name: Run Linting
+        run: yarn lint
+
+      # Step 6: Publish to Docker Registry
+      - name: Publish to Docker Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
-          name: thejustrusik/event-space-front-main
-          username: ${{ secrets.DOCKER_USERNAME }}
+          registry: git.sheber.education
+          name: sheber-education/front-main/front-main
+          username: package_master
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Update Project in Server
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" https://watchtower.kenuki.org/v1/update
+      # Optional Step: Deploy or update the project on the server
+      # - name: Update Project on Server
+      #   run: |
+      #     curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" https://watchtower.kenuki.org/v1/update
