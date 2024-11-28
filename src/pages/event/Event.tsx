@@ -25,7 +25,7 @@ export default function CreateEventFlow() {
   };
 
   const handleConfirm = () => {
-    navigate('/');
+    navigate('/my-events');
   };
 
   return (
