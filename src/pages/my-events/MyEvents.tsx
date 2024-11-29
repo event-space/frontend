@@ -21,13 +21,14 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { useUserStore } from '../../app/store/useUserStore';
-import { IUser } from '../../entities/types/IUser';
 import useFetch from '../../shared/network/useFetch';
 import { ISlot } from '../../entities/types/ISlot';
+import { ISpace } from '../../entities/types/ISpace';
 
 export interface IBooking {
   id: number;
   slot: ISlot;
+  space: ISpace;
   userEmail: string;
   bookingTime: string;
   status: string;
@@ -115,6 +116,7 @@ export default function MyEvents() {
               <TableHead>
                 <TableRow>
                   <TableCell>Index</TableCell>
+                  <TableCell>Place Name</TableCell>
                   <TableCell>Booking Time</TableCell>
                   <TableCell>Date</TableCell>
                   <TableCell>Status</TableCell>
@@ -127,13 +129,14 @@ export default function MyEvents() {
                   .map((booking, index) => (
                     <TableRow key={booking.id}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        {formatBookingTime(booking.bookingTime)}
-                      </TableCell>
+                      <TableCell>{booking.space.name}</TableCell>
                       <TableCell>
                         {formatDate(booking.slot.startTime)}
                       </TableCell>
                       <TableCell>{booking.status}</TableCell>
+                      <TableCell>
+                        {formatBookingTime(booking.bookingTime)}
+                      </TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"
