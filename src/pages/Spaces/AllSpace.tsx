@@ -26,7 +26,7 @@ export default function AllSpace() {
   const [filterCapacity, setFilterCapacity] = useState<number | 'all'>('all');
   const [filterSize, setFilterSize] = useState<number | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(9); // Adjust the number of items per page
+  const [itemsPerPage] = useState(9);
   const navigate = useNavigate();
 
   const { fetchData } = useFetch<ISpace[]>(
@@ -79,10 +79,9 @@ export default function AllSpace() {
     )
     .filter(space => filterSize === 'all' || space.size >= filterSize);
 
-  // Sorting logic
   const sortedSpaces = filteredSpaces.sort((a, b) => {
     if (sortOrder === 'newest') {
-      return b.id - a.id; // Assuming ID represents the creation date
+      return b.id - a.id;
     } else if (sortOrder === 'oldest') {
       return a.id - b.id;
     } else if (sortOrder === 'price') {
@@ -95,7 +94,6 @@ export default function AllSpace() {
     return 0;
   });
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedSpaces.slice(indexOfFirstItem, indexOfLastItem);
@@ -111,10 +109,6 @@ export default function AllSpace() {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1);
     }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
   };
 
   return (
@@ -151,7 +145,6 @@ export default function AllSpace() {
             sx={{ marginBottom: '20px' }}
           />
 
-          {/* Filters */}
           <Box sx={{ display: 'flex', gap: '10px' }}>
             <FormControl fullWidth>
               <InputLabel>Sort By</InputLabel>
@@ -211,7 +204,6 @@ export default function AllSpace() {
             )}
           </Box>
 
-          {/* Pagination */}
           <Box
             sx={{
               display: 'flex',
