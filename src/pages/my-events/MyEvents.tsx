@@ -16,6 +16,9 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
+  MenuItem,
+  Select,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -37,8 +40,12 @@ export interface IBooking {
 export default function MyEvents() {
   const { user: userInfo, loading } = useUserStore();
   const [data, setData] = useState<IBooking[]>([]);
+  const [filteredData, setFilteredData] = useState<IBooking[]>([]); // Data after applying filters
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [priceFilter, setPriceFilter] = useState('');
+  const [startDateFilter, setStartDateFilter] = useState('');
+  const [bookingDateFilter, setBookingDateFilter] = useState('');
   const { fetchData } = useFetch<any>(
     `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/email?userEmail=${userInfo?.username}`,
   );
@@ -54,11 +61,40 @@ export default function MyEvents() {
         method: 'GET',
       }).then(response => {
         if (response) {
-          setData(response);
+          const reversedData = response.reverse();
+          setData(reversedData);
+          setFilteredData(reversedData); // Set filtered data initially
         }
       });
     }
   }, [loading]);
+
+  useEffect(() => {
+    // Apply filters
+    let filtered = [...data];
+
+    if (priceFilter) {
+      const price = Number(priceFilter); // Преобразуем priceFilter в число
+      filtered = filtered.filter(
+        booking => booking.space.baseRentalCost <= price,
+      );
+    }
+
+    if (startDateFilter) {
+      filtered = filtered.filter(
+        booking =>
+          new Date(booking.slot.startTime) >= new Date(startDateFilter),
+      );
+    }
+
+    if (bookingDateFilter) {
+      filtered = filtered.filter(
+        booking => new Date(booking.bookingTime) >= new Date(bookingDateFilter),
+      );
+    }
+
+    setFilteredData(filtered); // Update filtered data
+  }, [priceFilter, startDateFilter, bookingDateFilter, data]);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -111,40 +147,76 @@ export default function MyEvents() {
             </Typography>
           </Box>
 
+          {/* Filter Section */}
+          <Box sx={{ marginBottom: 2 }}>
+            <TextField
+              label="Max Price"
+              type="number"
+              value={priceFilter}
+              onChange={e => setPriceFilter(e.target.value)}
+              variant="outlined"
+              size="small"
+              sx={{ marginRight: 2 }}
+            />
+            <TextField
+              label="Event Start Date"
+              type="date"
+              value={startDateFilter}
+              onChange={e => setStartDateFilter(e.target.value)}
+              variant="outlined"
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ marginRight: 2 }}
+            />
+            <TextField
+              label="Booking Date"
+              type="date"
+              value={bookingDateFilter}
+              onChange={e => setBookingDateFilter(e.target.value)}
+              variant="outlined"
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Box>
+
           <TableContainer component={Paper}>
             <Table aria-label="My Orders Table">
               <TableHead>
                 <TableRow>
                   <TableCell>Index</TableCell>
                   <TableCell>Place Name</TableCell>
-                  <TableCell>Booking Time</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell>Event Time</TableCell>
+                  <TableCell>Booked time</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Details</TableCell>
+                  <TableCell>Price</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data
+                {filteredData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((booking, index) => (
                     <TableRow key={booking.id}>
-                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                       <TableCell>{booking.space.name}</TableCell>
                       <TableCell>
                         {formatDate(booking.slot.startTime)}
                       </TableCell>
-                      <TableCell>{booking.status}</TableCell>
                       <TableCell>
                         {formatBookingTime(booking.bookingTime)}
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          onClick={() => navigate(`/my-events/${booking.id}`)}
-                        >
-                          Details
-                        </Button>
+                      <TableCell
+                        sx={{
+                          color:
+                            booking.status === 'CONFIRMED' ? 'green' : 'red',
+                        }}
+                      >
+                        {booking.status}
                       </TableCell>
+                      <TableCell>{booking.space.baseRentalCost}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -152,7 +224,7 @@ export default function MyEvents() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={data.length}
+              count={filteredData.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
