@@ -26,7 +26,7 @@ export default function Navbar() {
   return (
     <Box
       sx={{
-        display: 'flex',
+        display: { xs: 'none', md: 'flex' },
         flexWrap: 'wrap',
         gap: '24px',
         alignItems: 'center',

@@ -1,16 +1,15 @@
 import {
-  Avatar,
   Box,
   Breadcrumbs,
   Button,
+  Divider,
   Input,
   InputLabel,
   Link,
   Modal,
-  Paper,
   Typography,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { useUserStore } from '../../app/store/useUserStore';
@@ -18,12 +17,14 @@ import { IUser } from '../../entities/types/IUser';
 import useFetch from '../../shared/network/useFetch';
 
 export default function Profile() {
-  const { user: userInfo, loading } = useUserStore();
+  const location = useLocation();
+  const path = location.pathname;
+  const { user: userInfo, loading, login, refreshTokens } = useUserStore();
   const [user, setUserData] = useState<IUser>();
   const { fetchData } = useFetch<IUser>(
     'https://space-event.kenuki.org/security-service/api/user/profile',
   );
-  const { fetchData: editUserData } = useFetch<IUser>(
+  const { fetchData: editUserData } = useFetch<any>(
     'https://space-event.kenuki.org/security-service/api/user/profile-update',
   );
   const navigate = useNavigate();
@@ -45,19 +46,16 @@ export default function Profile() {
   }, [loading]);
 
   const [open, setOpen] = useState(false);
-  const [editUser, setEditUser] = useState({ ...user });
+  const [editUser, setEditUser] = useState<any>({ ...user });
 
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleChange = (event: { target: { name: any; value: any } }) => {
     const { name, value } = event.target;
-    console.log(name, value);
     setEditUser({ ...editUser, [name]: value });
   };
 
   const handleSave = async () => {
-    console.log(editUser);
     editUserData({
       method: 'POST',
       headers: {
@@ -65,11 +63,19 @@ export default function Profile() {
         Authorization: `Bearer ${userInfo?.tokens.accessToken}`,
       },
       body: JSON.stringify({
-        // phone_number: editUser.phoneNumber,
-        lastName: 'asd',
+        phone: editUser.phoneNumber,
+        lastName: editUser.lastName,
+        firstName: editUser.firstName,
       }),
     }).then(res => {
-      console.log(res);
+      if (userInfo && res) {
+        login(userInfo?.username, {
+          accessToken: res.accessToken,
+          refreshToken: userInfo?.tokens.refreshToken,
+        });
+      }
+      window.location.reload();
+      setOpen(false);
     });
   };
 
@@ -88,228 +94,259 @@ export default function Profile() {
               </Link>
               <Typography sx={{ color: 'text.primary' }}>Profile</Typography>
             </Breadcrumbs>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography sx={{ fontSize: '36px', fontWeight: '600' }}>
-                User Profile
-              </Typography>
-              <Button variant="text" href="/my-events">
-                My events
-              </Button>
-            </Box>
           </Box>
-          <Paper
+          <Box
             sx={{
-              display: 'inline-flex',
-              gap: '50px',
-              padding: '20px 40px',
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: '20px',
+              width: '100%',
             }}
           >
             <Box
               sx={{
                 display: 'flex',
-                gap: '50px',
-                alignItems: 'start',
-                justifyContent: 'start',
+                flexDirection: { xs: 'row', md: 'column' },
+                alignItems: 'flex-start',
+                marginTop: '20px',
+
+                flexWrap: 'wrap',
               }}
             >
-              <Paper
+              <Button
+                variant="text"
+                href="/profile"
+                color={path === '/profile' ? 'primary' : 'inherit'}
                 sx={{
-                  display: 'flex',
-                  padding: '20px 50px',
-                  height: '100%',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
                 }}
               >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    gap: '16px',
-                  }}
-                >
-                  <Avatar
-                    sx={{
-                      bgcolor: 'black',
-                      color: 'white',
-                      border: '1px solid white',
-                      width: '150px',
-                      height: '150px',
-                      fontSize: '128px',
-                    }}
-                  >
-                    {user?.firstname?.substring(0, 1)}
-                  </Avatar>
-                  <Typography sx={{ fontSize: '18px' }}>
-                    {user?.email}
-                  </Typography>
-                  <Button variant="outlined" onClick={handleOpen}>
-                    Edit Profile
-                  </Button>
-                </Box>
-              </Paper>
+                Profile
+              </Button>
+
+              <Button
+                variant="text"
+                href="/notifications"
+                color={path === '/notifications' ? 'primary' : 'inherit'}
+                sx={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
+                }}
+              >
+                Notifications
+              </Button>
+
+              <Button
+                variant="text"
+                href="/my-events"
+                color={path === '/my-events' ? 'primary' : 'inherit'}
+                sx={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
+                }}
+              >
+                My Events
+              </Button>
             </Box>
+
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '50px',
                 width: '100%',
+                padding: '20px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '10px',
+                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
               }}
             >
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '20px',
                 }}
               >
-                <Paper
+                <Typography
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                    padding: '20px 50px',
-                    width: '100%',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    color: '#333',
                   }}
                 >
-                  <Typography sx={{ fontSize: '24px', fontWeight: '600' }}>
-                    Personal Info
-                  </Typography>
-                  <Box
+                  Personal Info
+                </Typography>
+                <Button
+                  onClick={() => setOpen(true)}
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    padding: '8px 16px',
+                    borderRadius: '30px',
+                  }}
+                >
+                  Edit
+                </Button>
+              </Box>
+
+              <Divider
+                orientation="horizontal"
+                flexItem
+                sx={{
+                  background: '#10107b',
+                  marginBottom: '20px',
+                }}
+              />
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '20px',
+                  width: '100%',
+                  maxWidth: '600px',
+                  margin: '0 auto',
+                }}
+              >
+                {/* Email */}
+                <InputLabel
+                  htmlFor="email"
+                  sx={{
+                    fontSize: '16px',
+                    color: '#555',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'left', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
+                  Email
+                  <Input
+                    id="email"
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
+                      border: '1px solid #ccc',
+                      padding: '10px 15px',
+                      borderRadius: '5px',
+                      color: '#555',
+                      '&.Mui-disabled': {
+                        color: '#555',
+                        borderColor: '#ccc',
+                      },
                     }}
-                  >
-                    <InputLabel
-                      htmlFor="email"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        fontSize: '16px',
-                        color: 'black',
-                      }}
-                    >
-                      Email
-                      <Input
-                        id="email"
-                        sx={{
-                          border: '1px solid black',
-                          padding: '5px 10px',
-                          borderRadius: '5px',
-                          color: 'black',
-                          '&.Mui-disabled': {
-                            color: 'black',
-                            borderColor: 'black',
-                          },
-                        }}
-                        value={user?.email}
-                        disabled
-                        disableUnderline
-                      />
-                    </InputLabel>
-                    <InputLabel
-                      htmlFor="firstname"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        fontSize: '16px',
-                        color: 'black',
-                      }}
-                    >
-                      First Name
-                      <Input
-                        id="firstname"
-                        sx={{
-                          border: '1px solid black',
-                          padding: '5px 10px',
-                          borderRadius: '5px',
-                          color: 'black',
-                          '&.Mui-disabled': {
-                            color: 'black',
-                            borderColor: 'black',
-                          },
-                        }}
-                        value={user?.firstname}
-                        disabled
-                        disableUnderline
-                      />
-                    </InputLabel>
-                    <InputLabel
-                      htmlFor="lastname"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        fontSize: '16px',
-                        color: 'black',
-                      }}
-                    >
-                      Last Name
-                      <Input
-                        id="lastname"
-                        sx={{
-                          border: '1px solid black',
-                          padding: '5px 10px',
-                          borderRadius: '5px',
-                          color: 'black',
-                          '&.Mui-disabled': {
-                            color: 'black',
-                            borderColor: 'black',
-                          },
-                        }}
-                        value={user?.lastname}
-                        disabled
-                        disableUnderline
-                      />
-                    </InputLabel>
-                    <InputLabel
-                      htmlFor="phoneNumber"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        fontSize: '16px',
-                        color: 'black',
-                      }}
-                    >
-                      Phone Number
-                      <Input
-                        type="phoneNumber"
-                        id="email"
-                        sx={{
-                          border: '1px solid black',
-                          padding: '5px 10px',
-                          borderRadius: '5px',
-                          color: 'black',
-                          '&.Mui-disabled': {
-                            color: 'black',
-                            borderColor: 'black',
-                          },
-                        }}
-                        value={user?.phoneNumber}
-                        disabled
-                        disableUnderline
-                      />
-                    </InputLabel>
-                  </Box>
-                </Paper>
+                    value={user?.email}
+                    disabled
+                    disableUnderline
+                  />
+                </InputLabel>
+
+                {/* First Name */}
+                <InputLabel
+                  htmlFor="firstname"
+                  sx={{
+                    fontSize: '16px',
+                    color: '#555',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'left', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
+                  First Name
+                  <Input
+                    id="firstname"
+                    sx={{
+                      border: '1px solid #ccc',
+                      padding: '10px 15px',
+                      borderRadius: '5px',
+                      color: '#555',
+                      '&.Mui-disabled': {
+                        color: '#555',
+                        borderColor: '#ccc',
+                      },
+                    }}
+                    value={user?.firstname}
+                    disabled
+                    disableUnderline
+                  />
+                </InputLabel>
+
+                {/* Last Name */}
+                <InputLabel
+                  htmlFor="lastname"
+                  sx={{
+                    fontSize: '16px',
+                    color: '#555',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'left', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
+                  Last Name
+                  <Input
+                    id="lastname"
+                    sx={{
+                      border: '1px solid #ccc',
+                      padding: '10px 15px',
+                      borderRadius: '5px',
+                      color: '#555',
+                      '&.Mui-disabled': {
+                        color: '#555',
+                        borderColor: '#ccc',
+                      },
+                    }}
+                    value={user?.lastname}
+                    disabled
+                    disableUnderline
+                  />
+                </InputLabel>
+
+                {/* Phone Number */}
+                <InputLabel
+                  htmlFor="phoneNumber"
+                  sx={{
+                    fontSize: '16px',
+                    color: '#555',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'left', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
+                  Phone Number
+                  <Input
+                    id="phoneNumber"
+                    sx={{
+                      border: '1px solid #ccc',
+                      padding: '10px 15px',
+                      borderRadius: '5px',
+                      color: '#555',
+                      '&.Mui-disabled': {
+                        color: '#555',
+                        borderColor: '#ccc',
+                      },
+                    }}
+                    value={user?.phoneNumber}
+                    disabled
+                    disableUnderline
+                  />
+                </InputLabel>
               </Box>
             </Box>
-          </Paper>
+          </Box>
         </Box>
       </div>
       <Modal open={open} onClose={handleClose}>

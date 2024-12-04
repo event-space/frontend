@@ -1,12 +1,8 @@
 import {
-  Avatar,
   Box,
   Breadcrumbs,
   Button,
-  Input,
-  InputLabel,
   Link,
-  Modal,
   Paper,
   Typography,
   Table,
@@ -17,10 +13,8 @@ import {
   TablePagination,
   TableRow,
   TextField,
-  MenuItem,
-  Select,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { useUserStore } from '../../app/store/useUserStore';
@@ -38,9 +32,11 @@ export interface IBooking {
 }
 
 export default function MyEvents() {
+  const location = useLocation();
+  const path = location.pathname;
   const { user: userInfo, loading } = useUserStore();
   const [data, setData] = useState<IBooking[]>([]);
-  const [filteredData, setFilteredData] = useState<IBooking[]>([]); // Data after applying filters
+  const [filteredData, setFilteredData] = useState<IBooking[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [priceFilter, setPriceFilter] = useState('');
@@ -63,18 +59,17 @@ export default function MyEvents() {
         if (response) {
           const reversedData = response.reverse();
           setData(reversedData);
-          setFilteredData(reversedData); // Set filtered data initially
+          setFilteredData(reversedData);
         }
       });
     }
   }, [loading]);
 
   useEffect(() => {
-    // Apply filters
     let filtered = [...data];
 
     if (priceFilter) {
-      const price = Number(priceFilter); // Преобразуем priceFilter в число
+      const price = Number(priceFilter);
       filtered = filtered.filter(
         booking => booking.space.baseRentalCost <= price,
       );
@@ -93,11 +88,11 @@ export default function MyEvents() {
       );
     }
 
-    setFilteredData(filtered); // Update filtered data
+    setFilteredData(filtered);
   }, [priceFilter, startDateFilter, bookingDateFilter, data]);
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
+    _event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
     setPage(newPage);
@@ -112,12 +107,12 @@ export default function MyEvents() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB'); // Format as DD/MM/YYYY
+    return date.toLocaleDateString('en-GB');
   };
 
   const formatBookingTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleString(); // Format as Date and Time (e.g., 28/11/2024, 07:25:23)
+    return date.toLocaleString();
   };
 
   return (
@@ -142,95 +137,184 @@ export default function MyEvents() {
               </Link>
               <Typography sx={{ color: 'text.primary' }}>My Orders</Typography>
             </Breadcrumbs>
-            <Typography sx={{ fontSize: '36px', fontWeight: '600' }}>
-              My Orders
-            </Typography>
           </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'row', md: 'column' },
+                alignItems: 'flex-start',
+                marginTop: '20px',
 
-          {/* Filter Section */}
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="Max Price"
-              type="number"
-              value={priceFilter}
-              onChange={e => setPriceFilter(e.target.value)}
-              variant="outlined"
-              size="small"
-              sx={{ marginRight: 2 }}
-            />
-            <TextField
-              label="Event Start Date"
-              type="date"
-              value={startDateFilter}
-              onChange={e => setStartDateFilter(e.target.value)}
-              variant="outlined"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
+                flexWrap: 'wrap',
               }}
-              sx={{ marginRight: 2 }}
-            />
-            <TextField
-              label="Booking Date"
-              type="date"
-              value={bookingDateFilter}
-              onChange={e => setBookingDateFilter(e.target.value)}
-              variant="outlined"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Box>
+            >
+              <Button
+                variant="text"
+                href="/profile"
+                color={path === '/profile' ? 'primary' : 'inherit'}
+                sx={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
+                }}
+              >
+                Profile
+              </Button>
 
-          <TableContainer component={Paper}>
-            <Table aria-label="My Orders Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Index</TableCell>
-                  <TableCell>Place Name</TableCell>
-                  <TableCell>Event Time</TableCell>
-                  <TableCell>Booked time</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Price</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((booking, index) => (
-                    <TableRow key={booking.id}>
-                      <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                      <TableCell>{booking.space.name}</TableCell>
-                      <TableCell>
-                        {formatDate(booking.slot.startTime)}
-                      </TableCell>
-                      <TableCell>
-                        {formatBookingTime(booking.bookingTime)}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          color:
-                            booking.status === 'CONFIRMED' ? 'green' : 'red',
-                        }}
-                      >
-                        {booking.status}
-                      </TableCell>
-                      <TableCell>{booking.space.baseRentalCost}</TableCell>
+              <Button
+                variant="text"
+                href="/notifications"
+                color={path === '/notifications' ? 'primary' : 'inherit'}
+                sx={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
+                }}
+              >
+                Notifications
+              </Button>
+
+              <Button
+                variant="text"
+                href="/my-events"
+                color={path === '/my-events' ? 'primary' : 'inherit'}
+                sx={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Subtle hover effect
+                  },
+                }}
+              >
+                My Events
+              </Button>
+            </Box>
+            <Box sx={{ width: '100%', padding: '20px' }}>
+              <Typography
+                sx={{
+                  fontSize: '36px',
+                  fontWeight: '600',
+                  marginBottom: '20px',
+                }}
+              >
+                My Orders
+              </Typography>
+
+              {/* Filters Section */}
+              <Box
+                sx={{
+                  marginBottom: 3,
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 2,
+                  justifyContent: 'space-between',
+                }}
+              >
+                <TextField
+                  label="Max Price"
+                  type="number"
+                  value={priceFilter}
+                  onChange={e => setPriceFilter(e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
+                />
+                <TextField
+                  label="Event Start Date"
+                  type="date"
+                  value={startDateFilter}
+                  onChange={e => setStartDateFilter(e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
+                />
+                <TextField
+                  label="Booking Date"
+                  type="date"
+                  value={bookingDateFilter}
+                  onChange={e => setBookingDateFilter(e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
+                />
+              </Box>
+
+              {/* Orders Table */}
+              <TableContainer component={Paper}>
+                <Table aria-label="My Orders Table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Index</TableCell>
+                      <TableCell>Place Name</TableCell>
+                      <TableCell>Event Time</TableCell>
+                      <TableCell>Booked Time</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Price</TableCell>
                     </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredData.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {filteredData
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage,
+                      )
+                      .map((booking, index) => (
+                        <TableRow key={booking.id}>
+                          <TableCell>
+                            {page * rowsPerPage + index + 1}
+                          </TableCell>
+                          <TableCell>{booking.space.name}</TableCell>
+                          <TableCell>
+                            {formatDate(booking.slot.startTime)}
+                          </TableCell>
+                          <TableCell>
+                            {formatBookingTime(booking.bookingTime)}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color:
+                                booking.status === 'CONFIRMED'
+                                  ? 'green'
+                                  : 'red',
+                              fontWeight: '600', // Make status more prominent
+                            }}
+                          >
+                            {booking.status}
+                          </TableCell>
+                          <TableCell>{booking.space.baseRentalCost}</TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={filteredData.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  sx={{ marginTop: '20px' }}
+                />
+              </TableContainer>
+            </Box>
+          </Box>
         </Box>
       </div>
     </Box>

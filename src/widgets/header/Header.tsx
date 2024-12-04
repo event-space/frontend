@@ -1,4 +1,14 @@
-import { Box, Button, Divider, IconButton, Tooltip } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Tooltip,
+} from '@mui/material';
 import useFetch from '../../shared/network/useFetch';
 import { IUser } from '../../entities/types/IUser';
 import { useUserStore } from '../../app/store/useUserStore';
@@ -11,8 +21,12 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EventIcon from '@mui/icons-material/Event';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
+  const [open, setOpen] = useState(false);
+
   const { user, loading, logout } = useUserStore();
   const [userData, setUserData] = useState<IUser>();
   const { fetchData } = useFetch<IUser>(
@@ -23,6 +37,10 @@ export default function Header() {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleDrawer = (open: boolean) => () => {
+    setOpen(open);
   };
 
   useEffect(() => {
@@ -41,6 +59,45 @@ export default function Header() {
     }
   }, [loading]);
 
+  const DrawerList = (
+    <Box
+      sx={{
+        width: 250,
+        padding: '20px',
+      }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        <ListItem component={Link} to="/">
+          <ListItemText primary="Home" />
+        </ListItem>
+        <ListItem component={Link} to="/spaces">
+          <ListItemText primary="Notifications" />
+        </ListItem>
+        <ListItem component={Link} to="/about">
+          <ListItemText primary="About" />
+        </ListItem>
+        <ListItem component={Link} to="/faq">
+          <ListItemText primary="FAQ" />
+        </ListItem>
+        <ListItem component={Link} to="/events">
+          <ListItemText primary="Events" />
+        </ListItem>
+        <ListItem component={Link} to="/notifications">
+          <ListItemText primary="Notifications" />
+        </ListItem>
+        <ListItem component={Link} to="/profile">
+          <ListItemText primary="Profile" />
+        </ListItem>
+        <ListItem onClick={handleLogout}>
+          <ListItemText primary="Log out" />
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   return (
     <div className="container">
       <Box
@@ -51,64 +108,55 @@ export default function Header() {
         }}
       >
         <Logo />
-        <Box sx={{ display: 'flex', gap: '20px' }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '20px' }}>
           <Navbar />
           <Divider
             orientation="vertical"
             flexItem
-            sx={{ background: '#10107b' }}
+            sx={{
+              background: '#10107b',
+            }}
           />
-          {user?.isAuthenticated ? (
-            <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
-              <Tooltip title="Events">
-                <IconButton sx={{ color: '#10107b' }} href="/events">
-                  <EventIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Notifications">
-                <IconButton sx={{ color: '#10107b' }}>
-                  <NotificationsIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title={userData?.email}>
-                <IconButton sx={{ color: '#10107b' }} href="/profile">
-                  <AccountCircleIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Log out">
-                <IconButton sx={{ color: '#10107b' }} onClick={handleLogout}>
-                  <LogoutIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
-              <Button
-                variant="outlined"
-                sx={{
-                  textTransform: 'capitalize',
-                  fontWeight: 'bold',
-                  borderColor: '#10107b',
-                  color: '#10107b',
-                }}
-                href="/login"
-              >
-                Sign In
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  fontWeight: 'bold',
-                  background: '#10107b',
-                }}
-                href="/register"
-              >
-                Sign Up
-              </Button>
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
+            <Tooltip title="Events">
+              <IconButton sx={{ color: '#10107b' }} href="/events">
+                <EventIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Notifications">
+              <IconButton sx={{ color: '#10107b' }} href="/notifications">
+                <NotificationsIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Profile">
+              <IconButton sx={{ color: '#10107b' }} href="/profile">
+                <AccountCircleIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Log out">
+              <IconButton sx={{ color: '#10107b' }} onClick={handleLogout}>
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Box>
+
+        {/* Мобильное меню */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <IconButton sx={{ color: '#10107b' }} onClick={toggleDrawer(true)}>
+            <MenuIcon />
+          </IconButton>
         </Box>
       </Box>
+
+      {/* Drawer для меню, который выезжает справа */}
+      <Drawer
+        anchor="right" // меню будет выезжать справа
+        open={open}
+        onClose={toggleDrawer(false)}
+      >
+        {DrawerList}
+      </Drawer>
     </div>
   );
 }

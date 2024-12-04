@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable react/function-component-definition */
 import React, { FC, useCallback, useState, ChangeEvent } from 'react';
 import {
   Box,
@@ -13,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Divider,
 } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { ISpace } from '../../../entities/types/ISpace';
@@ -115,11 +114,15 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
 
   return (
     <>
-      <Card sx={{ width: 345, border: '1px solid gray' }}>
+      <Card sx={{ width: 345, borderRadius: '12px', boxShadow: 3 }}>
         <CardMedia
           component="img"
           image={`https://space-event.kenuki.org/order-service/api/v1/files/${interior.imageUrl}`}
-          sx={{ objectFit: 'cover', height: '150px' }}
+          sx={{
+            objectFit: 'cover',
+            height: '150px',
+            borderRadius: '12px 12px 0 0',
+          }}
           alt={interior.name}
         />
         <CardContent>
@@ -130,7 +133,16 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
               justifyContent: 'space-between',
             }}
           >
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              sx={{
+                fontWeight: '600',
+                color: '#333',
+                fontSize: '1.25rem',
+              }}
+            >
               {interior.name}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -159,15 +171,17 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
               }}
             >
               <Button
-                variant="outlined"
-                sx={{ width: '125px' }}
+                variant="contained"
+                color="primary"
+                sx={{ width: '125px', borderRadius: '8px' }}
                 onClick={handleOpen}
               >
                 Edit
               </Button>
               <Button
-                variant="outlined"
-                sx={{ width: '125px' }}
+                variant="contained"
+                color="error"
+                sx={{ width: '125px', borderRadius: '8px' }}
                 onClick={handleDelete}
               >
                 Delete
@@ -189,6 +203,7 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.name}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             margin="dense"
@@ -198,6 +213,7 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.location}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             margin="dense"
@@ -207,6 +223,7 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.address}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             margin="dense"
@@ -217,6 +234,7 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.size}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             margin="dense"
@@ -227,6 +245,7 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.maxCapacity}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <TextField
             margin="dense"
@@ -237,10 +256,15 @@ const InteriorItem: FC<Props> = ({ interior, updateQuery }) => {
             variant="outlined"
             value={form.baseRentalCost}
             onChange={handleChange}
+            sx={{ marginBottom: 2 }}
           />
           <Box mt={2}>
             <Typography variant="body2">Upload New Image</Typography>
-            <input type="file" onChange={handleFileChange} />
+            <input
+              type="file"
+              onChange={handleFileChange}
+              style={{ marginTop: '8px' }}
+            />
           </Box>
         </DialogContent>
         <DialogActions>

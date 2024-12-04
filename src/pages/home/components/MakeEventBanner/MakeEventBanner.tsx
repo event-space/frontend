@@ -15,7 +15,16 @@ export default function MakeEventBanner() {
     navigate('/login');
   };
   return (
-    <Box className={styles.makeEventBanner}>
+    <Box
+      className={styles.makeEventBanner}
+      sx={{
+        flexDirection: { xs: 'column', md: 'row' },
+        height: { xs: '400px', md: '200px' },
+        alignItems: { xs: 'center', md: 'end' },
+        bottom: { xs: '400px', sm: '300px', md: '200px', lg: '100px' },
+        justifyContent: { xs: 'end', md: 'center' },
+      }}
+    >
       <img src={BannerMakeEvent} alt="make event banner" />
       <Box
         sx={{

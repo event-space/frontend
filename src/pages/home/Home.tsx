@@ -10,7 +10,7 @@ import useFetch from '../../shared/network/useFetch';
 export default function HomePage() {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
 
-  const { loading: loadingData, fetchData } = useFetch<ISpace[]>(
+  const { fetchData } = useFetch<ISpace[]>(
     'https://space-event.kenuki.org/order-service/api/v1/space',
   );
 
@@ -34,7 +34,13 @@ export default function HomePage() {
         </Box>
       </div>
       <MakeEventBanner />
-      <Box className="container">
+      <Box
+        className="container"
+        sx={{
+          position: 'relative',
+          bottom: { xs: '300px', sm: '200px', md: '20px' },
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -72,9 +78,13 @@ export default function HomePage() {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '40px 0px',
+            justifyContent: { xs: 'center', md: 'space-between' },
+            flexWrap: { xs: 'wrap', md: 'nowrap' },
+            marginTop: '80px',
+            gap: '50px',
+            position: 'relative',
           }}
         >
           {spaces

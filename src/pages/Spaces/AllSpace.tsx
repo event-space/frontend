@@ -15,8 +15,8 @@ import {
 import { ISpace } from '../../entities/types/ISpace';
 import InteriorItem from '../../shared/ui/Card/InteriorItem';
 import useFetch from '../../shared/network/useFetch';
-import styles from './styles.module.scss';
 import { useNavigate } from 'react-router-dom';
+import styles from './styles.module.scss';
 
 export default function AllSpace() {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
@@ -67,6 +67,7 @@ export default function AllSpace() {
     setFilterSize(value === 'all' ? 'all' : Number(value));
   };
 
+  // Фильтрация
   const filteredSpaces = spaces
     .filter(
       space =>
@@ -79,6 +80,7 @@ export default function AllSpace() {
     )
     .filter(space => filterSize === 'all' || space.size >= filterSize);
 
+  // Сортировка
   const sortedSpaces = filteredSpaces.sort((a, b) => {
     if (sortOrder === 'newest') {
       return b.id - a.id;
@@ -145,8 +147,14 @@ export default function AllSpace() {
             sx={{ marginBottom: '20px' }}
           />
 
-          <Box sx={{ display: 'flex', gap: '10px' }}>
-            <FormControl fullWidth>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 4,
+            }}
+          >
+            <FormControl>
               <InputLabel>Sort By</InputLabel>
               <Select value={sortOrder} onChange={handleSortChange}>
                 <MenuItem value="newest">Newest</MenuItem>
@@ -155,7 +163,7 @@ export default function AllSpace() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl>
               <InputLabel>Price</InputLabel>
               <Select value={filterPrice} onChange={handlePriceChange}>
                 <MenuItem value="lowToHigh">Low to High</MenuItem>
@@ -163,7 +171,7 @@ export default function AllSpace() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl>
               <InputLabel>Capacity</InputLabel>
               <Select value={filterCapacity} onChange={handleCapacityChange}>
                 <MenuItem value="all">All</MenuItem>
@@ -174,7 +182,7 @@ export default function AllSpace() {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl>
               <InputLabel>Size</InputLabel>
               <Select value={filterSize} onChange={handleSizeChange}>
                 <MenuItem value="all">All</MenuItem>
@@ -185,14 +193,7 @@ export default function AllSpace() {
             </FormControl>
           </Box>
 
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              justifyContent: 'space-between',
-              gap: 4,
-            }}
-          >
+          <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {currentItems.map(place =>
               place.imageUrl ? (
                 <InteriorItem
@@ -207,7 +208,8 @@ export default function AllSpace() {
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'flex-end',
+              justifyContent: 'center',
+              gap: 2,
               marginTop: '20px',
             }}
           >
@@ -218,13 +220,7 @@ export default function AllSpace() {
             >
               Previous
             </Button>
-            <Typography
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                margin: '0 10px',
-              }}
-            >
+            <Typography sx={{ display: 'flex', alignItems: 'center' }}>
               Page {currentPage} of {totalPages}
             </Typography>
             <Button

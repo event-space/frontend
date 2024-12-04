@@ -10,11 +10,28 @@ export default function LoginPage() {
   const navigate = useNavigate();
   return (
     <Box component="section" className={styles.login}>
-      <Box component="div" className={styles.leftSection}>
+      <Box
+        component="div"
+        sx={{ flexDirection: 'column', width: '100%' }}
+        className={styles.leftSection}
+      >
         <div className="container">
-          <Box className={styles.login__wrapper}>
-            <Box>
+          <Box
+            className={styles.login__wrapper}
+            sx={{ flexDirection: 'column', width: '100%' }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={() => navigate('/')}>Back</Button>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Logo />
+              </Box>
+              <Box></Box>
             </Box>
             <Box
               sx={{
@@ -26,15 +43,10 @@ export default function LoginPage() {
               }}
             >
               <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                component="div"
+                className={styles.loginInfo}
+                sx={{ display: 'flex', justifyContent: 'center' }}
               >
-                <Logo />
-              </Box>
-              <Box component="div" className={styles.loginInfo}>
                 <Typography sx={{ fontWeight: '700', fontSize: '38px' }}>
                   Sign In to Event Space
                 </Typography>

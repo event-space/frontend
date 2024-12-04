@@ -10,7 +10,11 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   return (
     <Box component="section" className={styles.register}>
-      <Box component="div" className={styles.rightSection}>
+      <Box
+        component="div"
+        sx={{ display: { xs: 'none', sm: 'flex' } }}
+        className={styles.rightSection}
+      >
         <Box component="div" className={styles.registerInfoRight}>
           <Typography variant="h4">Hello Friend</Typography>
           <Typography variant="body1">
@@ -21,19 +25,12 @@ export default function RegisterPage() {
       </Box>
       <Box component="div" className={styles.leftSection}>
         <div className="container">
-          <Box className={styles.login__wrapper}>
-            <Box>
+          <Box
+            className={styles.login__wrapper}
+            sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button onClick={() => navigate('/')}>Back</Button>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '15vh',
-              }}
-            >
               <Box
                 sx={{
                   display: 'flex',
@@ -43,7 +40,23 @@ export default function RegisterPage() {
               >
                 <Logo />
               </Box>
-              <Box component="div" className={styles.loginInfo}>
+              <Box></Box>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '15vh',
+                width: '100%',
+              }}
+            >
+              <Box
+                component="div"
+                className={styles.loginInfo}
+                sx={{ width: '100%' }}
+              >
                 <Typography sx={{ fontWeight: '700', fontSize: '38px' }}>
                   Sign Un to Event Space
                 </Typography>
