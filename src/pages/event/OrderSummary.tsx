@@ -1,37 +1,37 @@
+import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import useFetch from '../../shared/network/useFetch';
 import { useUserStore } from '../../app/store/useUserStore';
+import PaymentModal from '../../entities/PaymentScript/PaymentModal';
 
-export default function OrderSummary({
-  eventDetails,
-  onConfirm,
-  onBack,
-}: {
+interface OrderSummaryProps {
   eventDetails: any;
   onConfirm: () => void;
   onBack: () => void;
-}) {
-  const { user } = useUserStore();
-  const { fetchData: bookEvent } = useFetch<any>(
-    `https://space-event.kenuki.org/order-service/api/v1/slots/book/${eventDetails.date.id}?userEmail=${user?.username}`,
-  );
+}
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({
+  eventDetails,
+  onConfirm,
+  onBack,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSuccess = () => {
+    onConfirm();
+    handleCloseModal();
+  };
 
   const formattedDate = new Date(eventDetails.date.startTime)
     .toISOString()
     .split('T')[0];
-
-  const handleConfirmBooking = () => {
-    bookEvent({
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then(response => {
-      if (response.status === 'CONFIRMED') {
-        onConfirm();
-      }
-    });
-  };
 
   return (
     <Box sx={{ p: 4 }}>
@@ -41,18 +41,24 @@ export default function OrderSummary({
       <Typography variant="body1">Event Name: {eventDetails.name}</Typography>
       <Typography variant="body1">Space: {eventDetails.space.name}</Typography>
       <Typography variant="body1">Date: {formattedDate}</Typography>
+
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
         <Button variant="outlined" color="primary" onClick={onBack}>
           Back
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleConfirmBooking}
-        >
+        <Button variant="contained" color="primary" onClick={handleOpenModal}>
           Confirm & Pay
         </Button>
       </Box>
+
+      <PaymentModal
+        eventDetails={eventDetails}
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        onSuccess={handleSuccess}
+      />
     </Box>
   );
-}
+};
+
+export default OrderSummary;

@@ -93,24 +93,20 @@ export default function CalendarPage({
   }, [user]);
 
   const handleNextMonth = () => {
-    if (currentMonth < new Date().getMonth() + 2) {
-      if (currentMonth === 11) {
-        setCurrentMonth(0);
-        setCurrentYear(currentYear + 1);
-      } else {
-        setCurrentMonth(currentMonth + 1);
-      }
+    if (currentMonth < 11) {
+      setCurrentMonth(currentMonth + 1);
+    } else {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
     }
   };
 
   const handlePrevMonth = () => {
-    if (currentMonth > new Date().getMonth()) {
-      if (currentMonth === 0) {
-        setCurrentMonth(11);
-        setCurrentYear(currentYear - 1);
-      } else {
-        setCurrentMonth(currentMonth - 1);
-      }
+    if (currentMonth > 0) {
+      setCurrentMonth(currentMonth - 1);
+    } else {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
     }
   };
 
