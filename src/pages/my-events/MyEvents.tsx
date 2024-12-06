@@ -60,6 +60,7 @@ export default function MyEvents() {
   const [data, setData] = useState<IBooking[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [dt, setDt] = useState<any[]>([]);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<number | null>(
@@ -108,6 +109,20 @@ export default function MyEvents() {
         },
       },
     );
+    const resp = await fetch(
+      `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/${spaceId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const events = await resp.json();
+    if (events) {
+      const ids = events.map((event: { slot: { id: any } }) => event.slot.id);
+      setDt(ids);
+    }
     const data = await response.json();
     if (data) {
       setEvents(data);
@@ -226,8 +241,21 @@ export default function MyEvents() {
     }
   };
 
-  const handleDateClick = (day: ISlot) => {
-    console.log(day);
+  const handleDateClick = async (day: ISlot) => {
+    const response = await fetch(
+      `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/${selectedBookingId}/slot?newSlotId=${day.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const data = await response.json();
+    if (data) {
+      window.location.reload();
+      setOpenEditDialog(false);
+    }
   };
 
   return (
@@ -465,12 +493,14 @@ export default function MyEvents() {
                                 <Button
                                   key={event.id}
                                   variant="contained"
-                                  color={event.booked ? 'error' : 'primary'}
+                                  color={
+                                    dt.includes(event.id) ? 'error' : 'primary'
+                                  }
                                   size="small"
-                                  disabled={event.booked}
+                                  disabled={dt.includes(event.id)}
                                   onClick={() => handleDateClick(event)}
                                 >
-                                  {event.booked ? 'BOOKED' : 'Select'}
+                                  {dt.includes(event.id) ? 'BOOKED' : 'Select'}
                                 </Button>
                               ))
                             ) : (
@@ -496,9 +526,6 @@ export default function MyEvents() {
         <DialogActions>
           <Button onClick={cancelEdit} color="primary">
             Cancel
-          </Button>
-          <Button onClick={() => setOpenEditDialog(false)} color="secondary">
-            Change
           </Button>
         </DialogActions>
       </Dialog>
