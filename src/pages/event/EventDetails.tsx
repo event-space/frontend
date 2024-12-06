@@ -92,7 +92,6 @@ export default function EventDetails({
             />
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <Typography variant="body1">
-                Name:{' '}
                 <span
                   style={{
                     fontFamily: 'monospace',

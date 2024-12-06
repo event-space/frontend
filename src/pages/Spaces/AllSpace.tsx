@@ -5,11 +5,6 @@ import {
   Link,
   Typography,
   TextField,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  SelectChangeEvent,
   Button,
 } from '@mui/material';
 import { ISpace } from '../../entities/types/ISpace';
@@ -21,10 +16,6 @@ import styles from './styles.module.scss';
 export default function AllSpace() {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState<string>('newest');
-  const [filterPrice, setFilterPrice] = useState<string>('lowToHigh');
-  const [filterCapacity, setFilterCapacity] = useState<number | 'all'>('all');
-  const [filterSize, setFilterSize] = useState<number | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(9);
   const navigate = useNavigate();
@@ -49,57 +40,14 @@ export default function AllSpace() {
     setSearchQuery(event.target.value);
   };
 
-  const handleSortChange = (event: SelectChangeEvent<string>) => {
-    setSortOrder(event.target.value);
-  };
-
-  const handlePriceChange = (event: SelectChangeEvent<string>) => {
-    setFilterPrice(event.target.value);
-  };
-
-  const handleCapacityChange = (event: SelectChangeEvent<string | number>) => {
-    const value = event.target.value;
-    setFilterCapacity(value === 'all' ? 'all' : Number(value));
-  };
-
-  const handleSizeChange = (event: SelectChangeEvent<string | number>) => {
-    const value = event.target.value;
-    setFilterSize(value === 'all' ? 'all' : Number(value));
-  };
-
-  // Фильтрация
-  const filteredSpaces = spaces
-    .filter(
-      space =>
-        space.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        space.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        space.location.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-    .filter(
-      space => filterCapacity === 'all' || space.maxCapacity >= filterCapacity,
-    )
-    .filter(space => filterSize === 'all' || space.size >= filterSize);
-
-  // Сортировка
-  const sortedSpaces = filteredSpaces.sort((a, b) => {
-    if (sortOrder === 'newest') {
-      return b.id - a.id;
-    } else if (sortOrder === 'oldest') {
-      return a.id - b.id;
-    } else if (sortOrder === 'price') {
-      if (filterPrice === 'lowToHigh') {
-        return a.baseRentalCost - b.baseRentalCost;
-      } else {
-        return b.baseRentalCost - a.baseRentalCost;
-      }
-    }
-    return 0;
-  });
+  const filteredSpaces = spaces.filter(space =>
+    space.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedSpaces.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedSpaces.length / itemsPerPage);
+  const currentItems = filteredSpaces.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredSpaces.length / itemsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -146,52 +94,6 @@ export default function AllSpace() {
             onChange={handleSearchChange}
             sx={{ marginBottom: '20px' }}
           />
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: 4,
-            }}
-          >
-            <FormControl>
-              <InputLabel>Sort By</InputLabel>
-              <Select value={sortOrder} onChange={handleSortChange}>
-                <MenuItem value="newest">Newest</MenuItem>
-                <MenuItem value="oldest">Oldest</MenuItem>
-                <MenuItem value="price">Price</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl>
-              <InputLabel>Price</InputLabel>
-              <Select value={filterPrice} onChange={handlePriceChange}>
-                <MenuItem value="lowToHigh">Low to High</MenuItem>
-                <MenuItem value="highToLow">High to Low</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl>
-              <InputLabel>Capacity</InputLabel>
-              <Select value={filterCapacity} onChange={handleCapacityChange}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value={10}>Up to 10</MenuItem>
-                <MenuItem value={20}>Up to 20</MenuItem>
-                <MenuItem value={50}>Up to 50</MenuItem>
-                <MenuItem value={100}>Up to 100</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl>
-              <InputLabel>Size</InputLabel>
-              <Select value={filterSize} onChange={handleSizeChange}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value={50}>Up to 50 m²</MenuItem>
-                <MenuItem value={100}>Up to 100 m²</MenuItem>
-                <MenuItem value={200}>Up to 200 m²</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
 
           <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {currentItems.map(place =>

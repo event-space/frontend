@@ -12,7 +12,10 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -31,20 +34,97 @@ export interface IBooking {
   status: string;
 }
 
+type Week = (Date | null)[];
+
+const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 export default function MyEvents() {
   const location = useLocation();
   const path = location.pathname;
   const { user: userInfo, loading } = useUserStore();
   const [data, setData] = useState<IBooking[]>([]);
-  const [filteredData, setFilteredData] = useState<IBooking[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [priceFilter, setPriceFilter] = useState('');
-  const [startDateFilter, setStartDateFilter] = useState('');
-  const [bookingDateFilter, setBookingDateFilter] = useState('');
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<number | null>(
+    null,
+  );
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
   const { fetchData } = useFetch<any>(
     `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/email?userEmail=${userInfo?.username}`,
   );
+
+  const handleDelete = async (id: number) => {
+    setSelectedBookingId(id);
+    setOpenDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (selectedBookingId !== null) {
+      const response = await fetch(
+        `https://space-event.kenuki.org/order-service/api/v1/slots/bookings/${selectedBookingId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (response.ok) {
+        setData(prevData =>
+          prevData.filter(booking => booking.id !== selectedBookingId),
+        );
+        setOpenDialog(false); // Close the dialog after successful deletion
+      }
+    }
+  };
+
+  const handleEdit = async (id: number, spaceId: number) => {
+    setSelectedBookingId(id);
+    const response = await fetch(
+      `https://space-event.kenuki.org/order-service/api/v1/slots/${spaceId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const data = await response.json();
+    if (data) {
+      setEvents(data);
+    }
+    setOpenEditDialog(true);
+  };
+
+  const cancelDelete = () => {
+    setOpenDialog(false);
+    setSelectedBookingId(null);
+  };
+
+  const cancelEdit = () => {
+    setOpenEditDialog(false);
+    setSelectedBookingId(null);
+  };
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,37 +139,10 @@ export default function MyEvents() {
         if (response) {
           const reversedData = response.reverse();
           setData(reversedData);
-          setFilteredData(reversedData);
         }
       });
     }
   }, [loading]);
-
-  useEffect(() => {
-    let filtered = [...data];
-
-    if (priceFilter) {
-      const price = Number(priceFilter);
-      filtered = filtered.filter(
-        booking => booking.space.baseRentalCost <= price,
-      );
-    }
-
-    if (startDateFilter) {
-      filtered = filtered.filter(
-        booking =>
-          new Date(booking.slot.startTime) >= new Date(startDateFilter),
-      );
-    }
-
-    if (bookingDateFilter) {
-      filtered = filtered.filter(
-        booking => new Date(booking.bookingTime) >= new Date(bookingDateFilter),
-      );
-    }
-
-    setFilteredData(filtered);
-  }, [priceFilter, startDateFilter, bookingDateFilter, data]);
 
   const handleChangePage = (
     _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -113,6 +166,68 @@ export default function MyEvents() {
   const formatBookingTime = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleString();
+  };
+
+  const [events, setEvents] = useState<ISlot[]>([]);
+
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth(),
+  );
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear(),
+  );
+
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+  const daysInMonth: (Date | null)[] = [];
+  for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+    daysInMonth.push(new Date(currentYear, currentMonth, i));
+  }
+
+  const emptyCells: null[] = [];
+  for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+    emptyCells.push(null);
+  }
+
+  const calendarRows: Week[] = [];
+  const cells = [...emptyCells, ...daysInMonth];
+
+  cells.forEach((day, i) => {
+    if (i % 7 === 0) {
+      calendarRows.push(cells.slice(i, i + 7) as Week);
+    }
+  });
+
+  const findEventsForDate = (date: Date | null): ISlot[] => {
+    if (!date) return [];
+    const dateStr = date.toDateString();
+    return events.filter(event => {
+      const eventDate = new Date(event.startTime).toDateString();
+      return eventDate === dateStr;
+    });
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth < 11) {
+      setCurrentMonth(currentMonth + 1);
+    } else {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    }
+  };
+
+  const handlePrevMonth = () => {
+    if (currentMonth > 0) {
+      setCurrentMonth(currentMonth - 1);
+    } else {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    }
+  };
+
+  const handleDateClick = (day: ISlot) => {
+    console.log(day);
   };
 
   return (
@@ -139,10 +254,7 @@ export default function MyEvents() {
             </Breadcrumbs>
           </Box>
           <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-            }}
+            sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}
           >
             <Box
               sx={{
@@ -150,7 +262,6 @@ export default function MyEvents() {
                 flexDirection: { xs: 'row', md: 'column' },
                 alignItems: 'flex-start',
                 marginTop: '20px',
-
                 flexWrap: 'wrap',
               }}
             >
@@ -161,14 +272,11 @@ export default function MyEvents() {
                 sx={{
                   fontSize: '16px',
                   fontWeight: '600',
-                  '&:hover': {
-                    backgroundColor: '#f0f0f0', // Subtle hover effect
-                  },
+                  '&:hover': { backgroundColor: '#f0f0f0' },
                 }}
               >
                 Profile
               </Button>
-
               <Button
                 variant="text"
                 href="/notifications"
@@ -176,14 +284,11 @@ export default function MyEvents() {
                 sx={{
                   fontSize: '16px',
                   fontWeight: '600',
-                  '&:hover': {
-                    backgroundColor: '#f0f0f0', // Subtle hover effect
-                  },
+                  '&:hover': { backgroundColor: '#f0f0f0' },
                 }}
               >
                 Notifications
               </Button>
-
               <Button
                 variant="text"
                 href="/my-events"
@@ -191,9 +296,7 @@ export default function MyEvents() {
                 sx={{
                   fontSize: '16px',
                   fontWeight: '600',
-                  '&:hover': {
-                    backgroundColor: '#f0f0f0', // Subtle hover effect
-                  },
+                  '&:hover': { backgroundColor: '#f0f0f0' },
                 }}
               >
                 My Events
@@ -210,52 +313,6 @@ export default function MyEvents() {
                 My Orders
               </Typography>
 
-              {/* Filters Section */}
-              <Box
-                sx={{
-                  marginBottom: 3,
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 2,
-                  justifyContent: 'space-between',
-                }}
-              >
-                <TextField
-                  label="Max Price"
-                  type="number"
-                  value={priceFilter}
-                  onChange={e => setPriceFilter(e.target.value)}
-                  variant="outlined"
-                  size="small"
-                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
-                />
-                <TextField
-                  label="Event Start Date"
-                  type="date"
-                  value={startDateFilter}
-                  onChange={e => setStartDateFilter(e.target.value)}
-                  variant="outlined"
-                  size="small"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
-                />
-                <TextField
-                  label="Booking Date"
-                  type="date"
-                  value={bookingDateFilter}
-                  onChange={e => setBookingDateFilter(e.target.value)}
-                  variant="outlined"
-                  size="small"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  sx={{ flexBasis: { xs: '100%', sm: '30%' } }} // Responsive width
-                />
-              </Box>
-
-              {/* Orders Table */}
               <TableContainer component={Paper}>
                 <Table aria-label="My Orders Table">
                   <TableHead>
@@ -266,10 +323,11 @@ export default function MyEvents() {
                       <TableCell>Booked Time</TableCell>
                       <TableCell>Status</TableCell>
                       <TableCell>Price</TableCell>
+                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredData
+                    {data
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage,
@@ -292,12 +350,30 @@ export default function MyEvents() {
                                 booking.status === 'CONFIRMED'
                                   ? 'green'
                                   : 'red',
-                              fontWeight: '600', // Make status more prominent
+                              fontWeight: '600',
                             }}
                           >
                             {booking.status}
                           </TableCell>
                           <TableCell>{booking.space.baseRentalCost}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              onClick={() =>
+                                handleEdit(booking.id, booking.space.id)
+                              }
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="text"
+                              color="error"
+                              onClick={() => handleDelete(booking.id)}
+                            >
+                              Cancel
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -305,7 +381,7 @@ export default function MyEvents() {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={filteredData.length}
+                  count={data.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}
@@ -317,6 +393,115 @@ export default function MyEvents() {
           </Box>
         </Box>
       </div>
+
+      <Dialog open={openDialog} onClose={cancelDelete}>
+        <DialogTitle>Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to cancel this booking?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={confirmDelete} color="secondary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openEditDialog} onClose={cancelEdit}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            {monthNames[currentMonth]} {currentYear}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={handlePrevMonth}
+              disabled={currentMonth === new Date().getMonth()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleNextMonth}
+              disabled={currentMonth === new Date().getMonth() + 1}
+            >
+              Next
+            </Button>
+          </Box>
+        </Box>
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {daysOfWeek.map(day => (
+                  <TableCell key={day} align="center">
+                    {day}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {calendarRows.map((week, index) => (
+                <TableRow key={index}>
+                  {week.map((day, idx) => (
+                    <TableCell key={idx} align="center">
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        {day ? (
+                          <>
+                            <Typography variant="body2">
+                              {day.getDate()}
+                            </Typography>
+                            {findEventsForDate(day).length > 0 ? (
+                              findEventsForDate(day).map(event => (
+                                <Button
+                                  key={event.id}
+                                  variant="contained"
+                                  color={event.booked ? 'error' : 'primary'}
+                                  size="small"
+                                  disabled={event.booked}
+                                  onClick={() => handleDateClick(event)}
+                                >
+                                  {event.booked ? 'BOOKED' : 'Select'}
+                                </Button>
+                              ))
+                            ) : (
+                              <Button
+                                variant="contained"
+                                color="info"
+                                size="small"
+                                disabled
+                              >
+                                No Slots
+                              </Button>
+                            )}
+                          </>
+                        ) : null}
+                      </Box>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <DialogActions>
+          <Button onClick={cancelEdit} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => setOpenEditDialog(false)} color="secondary">
+            Change
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -7,5 +7,4 @@ export interface ISpace {
   maxCapacity: number;
   baseRentalCost: number;
   imageUrl: string;
-  slots: any[];
 }
