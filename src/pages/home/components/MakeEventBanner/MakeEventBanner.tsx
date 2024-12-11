@@ -42,7 +42,7 @@ export default function MakeEventBanner() {
         <Typography
           sx={{ color: 'white', fontSize: '18px', fontWeight: '300' }}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.{' '}
+          The wastest way for create event. Click the button for creating event.
         </Typography>
         <Button
           sx={{

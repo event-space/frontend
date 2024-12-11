@@ -98,11 +98,7 @@ export default function AllSpace() {
           <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {currentItems.map(place =>
               place.imageUrl ? (
-                <InteriorItem
-                  key={place.id}
-                  interior={place}
-                  updateQuery={fetchData}
-                />
+                <InteriorItem key={place.id} interior={place} />
               ) : null,
             )}
           </Box>

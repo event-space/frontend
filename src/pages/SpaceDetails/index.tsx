@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Container,
   Typography,
@@ -19,15 +19,18 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Avatar,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { ISpace } from '../../entities/types/ISpace';
 import useFetch from '../../shared/network/useFetch';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useUserStore } from '../../app/store/useUserStore';
 
 const SpaceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useUserStore();
   const [space, setSpace] = useState<ISpace | null>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [commentInput, setCommentInput] = useState<string>('');
@@ -80,7 +83,7 @@ const SpaceDetailPage: React.FC = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: 1, // Assuming userId is 1, you can replace it with the actual user's id
+        userEmail: user?.username,
         spaceId: id,
         content: commentInput,
       }),
@@ -91,7 +94,7 @@ const SpaceDetailPage: React.FC = () => {
         ...prevComments,
         {
           content: commentInput,
-          userId: 1,
+          userEmail: user?.username,
           createTime: new Date().toISOString(),
         },
       ]);
@@ -99,10 +102,10 @@ const SpaceDetailPage: React.FC = () => {
     }
   };
 
-  const handleEditComment = (index: number) => {
+  const handleEditComment = useCallback((index: number) => {
     setEditCommentIndex(index);
     setEditedComment(comments[index].content);
-  };
+  }, []);
 
   const handleSaveEditComment = (index: number) => {
     const updatedComments = [...comments];
@@ -174,12 +177,14 @@ const SpaceDetailPage: React.FC = () => {
           }}
         />
         <CardContent>
-          <Typography variant="h4" gutterBottom fontWeight="bold">
-            {space?.name}
-          </Typography>
-          <Typography variant="body1" color="textSecondary" paragraph>
-            {space?.address}
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
+              {space?.name}
+            </Typography>
+            <Typography variant="body1" color="textSecondary" paragraph>
+              {space?.address}
+            </Typography>
+          </Box>
           <Typography variant="body2" color="textPrimary" paragraph>
             <strong>Location:</strong> {space?.location}
           </Typography>
@@ -200,83 +205,141 @@ const SpaceDetailPage: React.FC = () => {
       <Typography variant="h6" fontWeight="bold" gutterBottom>
         Comments
       </Typography>
-      <Paper sx={{ p: 2, boxShadow: 3 }}>
-        <List>
-          {comments.map((comment, index) => (
-            <ListItem
-              key={comment.id}
-              sx={{ display: 'flex', alignItems: 'center' }}
-            >
-              <ListItemText
-                primary={comment.userId}
-                secondary={comment.content}
-                sx={{ flexGrow: 1 }}
-              />
-              {editCommentIndex === index ? (
-                <TextField
-                  value={editedComment}
-                  onChange={e => setEditedComment(e.target.value)}
-                  variant="outlined"
-                  size="small"
-                  sx={{ mr: 1 }}
-                />
-              ) : (
-                <>
-                  <IconButton
-                    onClick={() => handleEditComment(index)}
-                    color="primary"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDeleteComment(comment.id)}
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </>
-              )}
-              {editCommentIndex === index && (
-                <Button
-                  onClick={() => handleSaveEditComment(index)}
-                  variant="contained"
-                  color="primary"
-                  sx={{ ml: 2 }}
+      {comments.length > 0 ? (
+        <Paper sx={{ p: 2, boxShadow: 3 }}>
+          <List>
+            {comments.map((comment, index) => (
+              <ListItem
+                key={comment.id}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  flexDirection: 'column',
+                  gap: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    gap: 2,
+                    width: '100%',
+                  }}
                 >
-                  Save
-                </Button>
-              )}
-            </ListItem>
-          ))}
-        </List>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      width: '100%',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Avatar>
+                        {comment.userEmail
+                          ? comment.userEmail.charAt(0).toUpperCase()
+                          : ''}
+                      </Avatar>
+                      <Typography variant="body2" color="textSecondary">
+                        {comment.userEmail}
+                      </Typography>
+                    </Box>
+                    {user?.username === comment.userEmail && (
+                      <Box>
+                        {editCommentIndex === index ? (
+                          <>
+                            <Button
+                              onClick={() => handleSaveEditComment(index)}
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                              sx={{ ml: 2 }}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              onClick={() => setEditCommentIndex(null)}
+                              variant="outlined"
+                              color="secondary"
+                              size="small"
+                              sx={{ ml: 1 }}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <IconButton
+                              onClick={() => handleEditComment(index)}
+                              color="primary"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleDeleteComment(comment.id)}
+                              color="error"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
+                      </Box>
+                    )}
+                  </Box>
+                  <Typography variant="body2" color="textPrimary">
+                    {comment.content}
+                  </Typography>
+                  {editCommentIndex === index && (
+                    <TextField
+                      value={editedComment}
+                      onChange={e => setEditedComment(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                    />
+                  )}
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      ) : (
+        <Typography sx={{ color: 'gray' }}>There no comments</Typography>
+      )}
 
-        <TextField
-          label="Leave a Comment"
-          multiline
-          rows={4}
-          fullWidth
-          variant="outlined"
-          value={commentInput}
-          onChange={e => setCommentInput(e.target.value)}
-          sx={{ mt: 3 }}
-        />
+      {user?.isAuthenticated && (
+        <>
+          <TextField
+            label="Leave a Comment"
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+            value={commentInput}
+            onChange={e => setCommentInput(e.target.value)}
+            sx={{ mt: 3 }}
+          />
 
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{
-            mt: 2,
-            textTransform: 'none',
-            boxShadow: 2,
-            ':hover': {
-              backgroundColor: '#9c27b0',
-            },
-          }}
-          onClick={handleCommentSubmit}
-        >
-          Submit Comment
-        </Button>
-      </Paper>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              mt: 2,
+              textTransform: 'none',
+              boxShadow: 2,
+              ':hover': {
+                backgroundColor: '#9c27b0',
+              },
+            }}
+            onClick={handleCommentSubmit}
+          >
+            Submit Comment
+          </Button>
+        </>
+      )}
 
       <Dialog open={openDeleteDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirm Deletion</DialogTitle>

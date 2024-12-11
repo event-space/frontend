@@ -2,7 +2,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './styles.module.scss';
-import { MakeEventBanner, RegisterBanner, BannerHome } from './components';
+import { MakeEventBanner, BannerHome } from './components';
 import InteriorItem from '../../shared/ui/Card/InteriorItem';
 import { ISpace } from '../../entities/types/ISpace';
 import useFetch from '../../shared/network/useFetch';
@@ -29,7 +29,11 @@ export default function HomePage() {
   return (
     <Box component="section" sx={{ background: 'white' }}>
       <div className="container">
-        <Box component="div" className={styles.home}>
+        <Box
+          component="div"
+          className={styles.home}
+          sx={{ marginBottom: '50px' }}
+        >
           <BannerHome />
         </Box>
       </div>
@@ -55,7 +59,7 @@ export default function HomePage() {
               color: '#4A148C',
             }}
           >
-            Spaces
+            Popular Spaces
           </Typography>
           <Button
             variant="contained"
@@ -83,6 +87,7 @@ export default function HomePage() {
             justifyContent: { xs: 'center', md: 'space-between' },
             flexWrap: { xs: 'wrap', md: 'nowrap' },
             marginTop: '80px',
+            marginBottom: '30px',
             gap: '50px',
             position: 'relative',
           }}
@@ -91,16 +96,11 @@ export default function HomePage() {
             .slice(0, 3)
             .map(place =>
               place.imageUrl ? (
-                <InteriorItem
-                  key={place.id}
-                  interior={place}
-                  updateQuery={fetchData}
-                />
+                <InteriorItem key={place.id} interior={place} />
               ) : null,
             )}
         </Box>
       </Box>
-      <RegisterBanner />
     </Box>
   );
 }
