@@ -3,7 +3,6 @@ import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.scss';
 import LoginForm from './components/LoginForm/LoginForm';
-import RightSection from './components/RightSection/RightSection';
 import { Logo } from '../../shared/ui/Logo';
 
 export default function LoginPage() {
@@ -20,18 +19,18 @@ export default function LoginPage() {
             className={styles.login__wrapper}
             sx={{ flexDirection: 'column', width: '100%' }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box>
               <Button onClick={() => navigate('/')}>Back</Button>
               <Box
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
+                  alignSelf: 'center',
                   justifyContent: 'center',
                 }}
               >
                 <Logo />
               </Box>
-              <Box></Box>
             </Box>
             <Box
               sx={{
@@ -56,7 +55,6 @@ export default function LoginPage() {
           </Box>
         </div>
       </Box>
-      <RightSection />
     </Box>
   );
 }

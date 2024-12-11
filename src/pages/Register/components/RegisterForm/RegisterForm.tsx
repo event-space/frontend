@@ -70,7 +70,11 @@ export default function RegisterForm() {
     repeatPassword.trim() !== '';
 
   return (
-    <FormControl required className={styles.loginForm}>
+    <FormControl
+      required
+      className={styles.loginForm}
+      sx={{ maxWidth: '500px' }}
+    >
       <label htmlFor="login" className={styles.inputForm}>
         <Typography sx={{ fontWeight: '600' }}>YOUR LOGIN</Typography>
         <input

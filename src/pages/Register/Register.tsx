@@ -9,38 +9,29 @@ import { Logo } from '../../shared/ui/Logo';
 export default function RegisterPage() {
   const navigate = useNavigate();
   return (
-    <Box component="section" className={styles.register}>
+    <Box component="section" className={styles.login}>
       <Box
         component="div"
-        sx={{ display: { xs: 'none', sm: 'flex' } }}
-        className={styles.rightSection}
+        sx={{ flexDirection: 'column', width: '100%' }}
+        className={styles.leftSection}
       >
-        <Box component="div" className={styles.registerInfoRight}>
-          <Typography variant="h4">Hello Friend</Typography>
-          <Typography variant="body1">
-            To keep connected with us provide us with your information
-          </Typography>
-          <Button className={styles.signUpRight}>SignUp</Button>
-        </Box>
-      </Box>
-      <Box component="div" className={styles.leftSection}>
         <div className="container">
           <Box
             className={styles.login__wrapper}
-            sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+            sx={{ flexDirection: 'column', width: '100%' }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box>
               <Button onClick={() => navigate('/')}>Back</Button>
               <Box
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
+                  alignSelf: 'center',
                   justifyContent: 'center',
                 }}
               >
                 <Logo />
               </Box>
-              <Box></Box>
             </Box>
             <Box
               sx={{
@@ -48,14 +39,12 @@ export default function RegisterPage() {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                gap: '15vh',
-                width: '100%',
               }}
             >
               <Box
                 component="div"
                 className={styles.loginInfo}
-                sx={{ width: '100%' }}
+                sx={{ display: 'flex', justifyContent: 'center' }}
               >
                 <Typography sx={{ fontWeight: '700', fontSize: '38px' }}>
                   Sign Un to Event Space

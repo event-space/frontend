@@ -82,18 +82,22 @@ export default function Header() {
         <ListItem component={Link} to="/faq">
           <ListItemText primary="FAQ" />
         </ListItem>
-        <ListItem component={Link} to="/events">
-          <ListItemText primary="Events" />
-        </ListItem>
-        <ListItem component={Link} to="/notifications">
-          <ListItemText primary="Notifications" />
-        </ListItem>
-        <ListItem component={Link} to="/profile">
-          <ListItemText primary="Profile" />
-        </ListItem>
-        <ListItem onClick={handleLogout}>
-          <ListItemText primary="Log out" />
-        </ListItem>
+        {user?.isAuthenticated && (
+          <>
+            <ListItem component={Link} to="/events">
+              <ListItemText primary="Events" />
+            </ListItem>
+            <ListItem component={Link} to="/notifications">
+              <ListItemText primary="Notifications" />
+            </ListItem>
+            <ListItem component={Link} to="/profile">
+              <ListItemText primary="Profile" />
+            </ListItem>
+            <ListItem onClick={handleLogout}>
+              <ListItemText primary="Log out" />
+            </ListItem>
+          </>
+        )}
       </List>
     </Box>
   );
@@ -108,7 +112,13 @@ export default function Header() {
         }}
       >
         <Logo />
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '20px' }}>
+        <Box
+          sx={{
+            display: { xs: 'none', md: 'flex' },
+            gap: '20px',
+            alignItems: 'center',
+          }}
+        >
           <Navbar />
           <Divider
             orientation="vertical"
@@ -117,31 +127,64 @@ export default function Header() {
               background: '#10107b',
             }}
           />
-          <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
-            <Tooltip title="Events">
-              <IconButton sx={{ color: '#10107b' }} href="/events">
-                <EventIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Notifications">
-              <IconButton sx={{ color: '#10107b' }} href="/notifications">
-                <NotificationsIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Profile">
-              <IconButton sx={{ color: '#10107b' }} href="/profile">
-                <AccountCircleIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Log out">
-              <IconButton sx={{ color: '#10107b' }} onClick={handleLogout}>
-                <LogoutIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          {user?.isAuthenticated ? (
+            <>
+              <Box sx={{ display: 'flex', gap: '16px', color: '#10107b' }}>
+                <Tooltip title="Events">
+                  <IconButton sx={{ color: '#10107b' }} href="/events">
+                    <EventIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Notifications">
+                  <IconButton sx={{ color: '#10107b' }} href="/notifications">
+                    <NotificationsIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Profile">
+                  <IconButton sx={{ color: '#10107b' }} href="/profile">
+                    <AccountCircleIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Log out">
+                  <IconButton sx={{ color: '#10107b' }} onClick={handleLogout}>
+                    <LogoutIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Link
+                to={'/login'}
+                style={{
+                  textDecoration: 'none',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#10107b',
+                }}
+              >
+                Sign In
+              </Link>
+              <Link
+                to={'/register'}
+                style={{
+                  textDecoration: 'none',
+                  fontSize: '18px',
+                  border: '1px solid #10107b',
+                  fontWeight: '600',
+                  borderRadius: '5px',
+                  padding: '5px 10px',
+                  background: '#10107b',
+                  color: 'white',
+                  cursor: 'pointer',
+                }}
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </Box>
 
-        {/* Мобильное меню */}
         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
           <IconButton sx={{ color: '#10107b' }} onClick={toggleDrawer(true)}>
             <MenuIcon />
