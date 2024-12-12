@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUserStore } from '../../app/store/useUserStore';
 import useFetch from '../../shared/network/useFetch';
 import { ISpace } from '../../entities/types/ISpace';

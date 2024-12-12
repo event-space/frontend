@@ -194,9 +194,29 @@ const SpaceDetailPage: React.FC = () => {
           <Typography variant="body2" color="textPrimary" paragraph>
             <strong>Max Capacity:</strong> {space?.maxCapacity}
           </Typography>
-          <Typography variant="h5" color="primary" fontWeight="bold" paragraph>
-            ${space?.baseRentalCost} / day
-          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography
+              variant="h5"
+              color="primary"
+              fontWeight="bold"
+              paragraph
+            >
+              ${space?.baseRentalCost} / day
+            </Typography>
+            <Button
+              variant="contained"
+              href={user?.isAuthenticated ? `/events?id=${space.id}` : '/login'}
+              color="primary"
+            >
+              Create Event
+            </Button>
+          </Box>
         </CardContent>
       </Card>
 
