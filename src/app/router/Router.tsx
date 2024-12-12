@@ -16,6 +16,8 @@ import { CreateEvent } from '../../pages/event';
 import { MyEvents } from '../../pages/my-events';
 import Notifications from '../../pages/notifications/Notifications';
 import SpaceDetailPage from '../../pages/SpaceDetails';
+import AboutPage from '../../pages/about';
+import FAQPage from '../../pages/faq';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +34,8 @@ const router = createBrowserRouter(
         />
         <Route path="/spaces" element={<AllSpace />} />
         <Route path="/space/:id" element={<SpaceDetailPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/faq" element={<FAQPage />} />
         <Route
           path="/events"
           element={
